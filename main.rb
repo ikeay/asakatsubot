@@ -2,6 +2,7 @@
 require 'date'
 require 'slack'
 require './key.rb'
+require 'timers'
 
 ONE_WEEK = 7
 
@@ -59,13 +60,17 @@ end
 
 def push_reservation_msg(wday)
     reservation_date = date_from_wday(wday)
+
+    alerm_date = reservation_date - 1
+    alerm_time = Time.new(alerm_date.year, alerm_date.mon, alerm_date.mday, 21, 6, 0, "+09:00")
     params = {
         token: TOKEN,
         channel: "#asakatsu",
         as_user: true,
-        text: "わかりました。#{wday}曜日ですね。#{reservation_date.mon}月#{reservation_date.mday}日#{wday}曜日8:30-予約しました。",
+        text: "わかりました。#{wday}曜日ですね。#{reservation_date.mon}月#{reservation_date.mday}日#{wday}曜日8:30-予約しました。\nアラームを#{alerm_time.to_s}に設定しました！",
     }
     Slack.chat_postMessage(params)
+    alerm_time
 end
 
 def push_remind_msg
@@ -81,7 +86,9 @@ end
 client.on :message do |data|
     if bot_message?(data, 'asakatsu_bot', '@U0H2JQCAU')
         if wday = wday_contains?(data)
-            push_reservation_msg(wday)
+            alerm_time = push_reservation_msg(wday)
+            # timers = Timers::Group.new
+            # timer = timers.after(alerm_time.to_i - Time.now.to_i)
         end
     end
 end
