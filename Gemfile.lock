@@ -4,6 +4,7 @@ GEM
     coderay (1.1.0)
     daemons (1.2.3)
     eventmachine (1.0.8)
+    json (1.8.3)
     method_source (0.8.2)
     pry (0.10.3)
       coderay (~> 1.1.0)
@@ -12,6 +13,7 @@ GEM
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
+    redis (3.2.2)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -30,7 +32,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  json
   pry
+  redis
   sinatra
   slack
   thin
