@@ -1,4 +1,5 @@
 source :rubygems
 
-gem "timers"
 gem "slack"
+gem "redis"
+gem "json"
