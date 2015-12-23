@@ -1,15 +1,24 @@
-# coding: utf-8
-require 'date'
+# ライブラリ
+require 'sinatra'
 require 'slack'
-require './key.rb'
-require 'timers'
 
+# 開発環境用ライブラリ
+if settings.development?
+  require 'pry'
+end
+
+TOKEN = ENV['ASAKATSU_TOKEN']
 ONE_WEEK = 7
 
 Slack.configure do |config|
   config.token = TOKEN
 end
-client = Slack.realtime
+
+def wday_contains?(data)
+    if data['text'] =~ /(月|火|水|木|金|土|日)/
+        return $1
+    end
+end
 
 def date_from_wday(date_str)
     now = Date.today
@@ -48,29 +57,15 @@ def find_wday_num(str)
     end
 end
 
-def bot_message?(data, name, account)
-    return data['subtype'] != 'bot_message' && (data['text'].match("#{name}:") || data['text'].match("<#{account}>:"))
-end
-
-def wday_contains?(data)
-    if data['text'] =~ /(月|火|水|木|金|土|日)/
-        return $1
-    end
-end
-
 def push_reservation_msg(wday)
     reservation_date = date_from_wday(wday)
-
-    alerm_date = reservation_date - 1
-    alerm_time = Time.new(alerm_date.year, alerm_date.mon, alerm_date.mday, 21, 6, 0, "+09:00")
     params = {
         token: TOKEN,
-        channel: "#asakatsu",
+        channel: '#asakatsu',
         as_user: true,
         text: "わかりました。#{wday}曜日ですね。#{reservation_date.mon}月#{reservation_date.mday}日#{wday}曜日8:30-予約しました。\nアラームを#{alerm_time.to_s}に設定しました！",
     }
     Slack.chat_postMessage(params)
-    alerm_time
 end
 
 def push_remind_msg
@@ -83,14 +78,8 @@ def push_remind_msg
     Slack.chat_postMessage(params)
 end
 
-client.on :message do |data|
-    if bot_message?(data, 'asakatsu_bot', '@U0H2JQCAU')
-        if wday = wday_contains?(data)
-            alerm_time = push_reservation_msg(wday)
-            # timers = Timers::Group.new
-            # timer = timers.after(alerm_time.to_i - Time.now.to_i)
-        end
+get '/webhook' do
+    if wday = wday_contains?(params[:text])
+        push_reservation_msg(wday)
     end
 end
-
-client.start
