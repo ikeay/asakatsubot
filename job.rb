@@ -22,13 +22,13 @@ if ENV["REDISTOGO_URL"] != nil
   uri = URI.parse(ENV["REDISTOGO_URL"])
   redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
 else
-  redis = Redis.new host:"127.0.0.1", port:"6379"
+  redis = Redis.new(:host => "127.0.0.1", :port => "6379")
 end
 
 json = redis.get(REDIS_KEY)
 if json != nil
   body = JSON.parse(json)
-  if (Time.at(body['datetime']) - Time.now).abs < 3600
+  if (Time.at(body['time']) - Time.now).abs < 3600
     params = {
       token: SLACK_ASAKATSU_TOKEN,
       channel: '#asakatsu',
