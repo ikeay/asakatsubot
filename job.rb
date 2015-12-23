@@ -5,15 +5,15 @@ require 'json'
 require './settings.rb'
 
 Slack.configure do |config|
-  config.token = SLACK_ASAKATSU_TOKEN
+  config.token = ASAKATSU_TOKEN
 end
 
 def push_remind_msg
   params = {
-    token: TOKEN,
+    token: ASAKATSU_TOKEN,
     channel: '#asakatsu',
     as_user: true,
-    text: '明日は朝活！8:30〜です。タイマーを設定しましょう！！',
+    text: '明日は朝活！8:30〜です。目覚ましを設定しましょう！！',
   }
   Slack.chat_postMessage(params)
 end
@@ -29,12 +29,6 @@ json = redis.get(REDIS_KEY)
 if json != nil
   body = JSON.parse(json)
   if (Time.at(body['time']) - Time.now).abs < 3600
-    params = {
-      token: SLACK_ASAKATSU_TOKEN,
-      channel: '#asakatsu',
-      as_user: true,
-      text: '明日は朝活！8:30〜です。タイマーを設定しましょう！！',
-    }
-    Slack.chat_postMessage(params)
+    push_remind_msg
   end
 end
