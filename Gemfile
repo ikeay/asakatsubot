@@ -1,7 +1,7 @@
 # coding: utf-8
 source :rubygems
 
-gem "slack"
+gem "slack-api"
 gem "redis"
 gem "json"
 gem "thin"
