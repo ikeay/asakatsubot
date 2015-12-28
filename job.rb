@@ -11,7 +11,7 @@ end
 def push_remind_msg
   params = {
     token: ASAKATSU_TOKEN,
-    channel: '#asakatsu',
+    channel: '#asakatsu_ch',
     as_user: true,
     text: '明日は朝活！8:30〜です。目覚ましを設定しましょう！！',
   }
