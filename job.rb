@@ -9,24 +9,22 @@ Slack.configure do |config|
   config.token = ASAKATSU_TOKEN
 end
 
-def push_remind_msg
+def push_msg_with_text(text)
   params = {
     token: ASAKATSU_TOKEN,
     channel: '#asakatsu_ch',
     as_user: true,
-    text: '明日は朝活！8:30〜です。目覚ましを設定しましょう！！',
+    text: text,
   }
   Slack.chat_postMessage(params)
 end
 
+def push_remind_msg
+  push_msg_with_text('明日は朝活！8:30〜です。目覚ましを設定しましょう！！')
+end
+
 def push_suggestion_msg
-  params = {
-    token: ASAKATSU_TOKEN,
-    channel: '#asakatsu_ch',
-    as_user: true,
-    text: '今週はまだ朝活の予定が入っていないようです。予定を立てましょう！',
-  }
-  Slack.chat_postMessage(params)
+  push_msg_with_text('今週はまだ朝活の予定が入っていないようです。予定を立てましょう！')
 end
 
 if ENV["REDISTOGO_URL"] != nil
